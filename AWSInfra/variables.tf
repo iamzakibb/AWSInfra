@@ -3,11 +3,6 @@ variable "required_tags" {
   default = {}
 }
 
-variable "aws_region" {
-  description = "AWS region to deploy into"
-  type        = string
-  default     = "us-east-1"
-}
 
 variable "bucket_names" {
   description = "List of S3 bucket names to create"
