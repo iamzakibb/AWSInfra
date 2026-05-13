@@ -1,0 +1,39 @@
+stages:
+  - validate
+
+validate_aws_creds:
+  stage: validate
+  script:
+    - |
+      set -euo pipefail
+
+      echo "Checking required AWS environment variables..."
+
+      if [ -z "${AWS_ACCESS_KEY_ID:-}" ]; then
+        echo "AWS_ACCESS_KEY_ID is missing"
+        exit 1
+      fi
+
+      if [ -z "${AWS_SECRET_ACCESS_KEY:-}" ]; then
+        echo "AWS_SECRET_ACCESS_KEY is missing"
+        exit 1
+      fi
+
+      if [ -z "${AWS_DEFAULT_REGION:-}" ]; then
+        echo "AWS_DEFAULT_REGION is missing"
+        exit 1
+      fi
+
+      echo "AWS env vars are present."
+      echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
+
+      if command -v aws >/dev/null 2>&1; then
+        echo "AWS CLI found. Verifying identity..."
+        aws sts get-caller-identity
+      else
+        echo "AWS CLI is not installed on this runner."
+        echo "Credentials variables are present, but identity check cannot run without aws cli."
+        exit 1
+      fi
+  rules:
+    - when: always
